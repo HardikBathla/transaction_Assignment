@@ -15,7 +15,7 @@ function handleDisconnect() {
     } else {
       console.log("MYSQL CONNECTED")
       global.connection = P.promisifyAll(connection);
-      control.admin.pushDataAdmin1();
+      control.admin.pushDataAdmin();
     } 
   });  pool.on('error', (err) => {
     if (err.code === 'PROTOCOL_CONNECTION_LOST') { 

@@ -1,6 +1,7 @@
 const Joi=require('joi');
 const Control=require('../controller');
 module.exports=[
+  /***************************************** ADMIN LOGIN*****************************/
 {   method:'POST',
      path:'/admin/login',
    config:{
@@ -19,7 +20,7 @@ module.exports=[
               }
           },
      handler:async function(req,res){
-      const response =await Control.admin.checkData(req);
+      const response =await Control.admin.checkDataForLogin(req);
       return response;
     }
 }
@@ -45,7 +46,7 @@ module.exports=[
             },
 
       handler:async function(req,res){
-      const response = await Control.admin.getData(req.headers.token);
+      const response = await Control.admin.getDataOfAdmin(req.headers.token);
       return response;
     }
   },

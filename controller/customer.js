@@ -6,13 +6,14 @@ const jwt =require('jsonwebtoken');
 const bcrypt=require('bcrypt');
 
 module.exports={
+  /************************************ Create Customer ************************************/
    pushData: async function(req){
 try{
-      let data= await service.customer.emailCheck(req.payload.emailid);
+      let data = await service.customer.emailCheck(req.payload.emailid);
     if(!data.length){
-      let check= await service.customer.phoneCheck(req);
+      let check = await service.customer.phoneCheck(req);
     if(!check.length){
-      let create= await service.customer.createCustomer(req);
+      let create = await service.customer.createCustomer(req);
       return create;
     }else{
      throw constantMsg.errorMessage.eng.phoneNumberExist;
@@ -27,18 +28,18 @@ try{
 
 
 },
-
+/**************************************OTP VERIFY******************************** */
 otpVerify: async function(req){
   try{
-  let data= await service.customer.emailCheck(req.payload.emailid);
+  let data = await service.customer.emailCheck(req.payload.emailid);
   if(data.length){
-   if(data[0].status=='pending'){
-    if(data[0].otp==req.payload.otp){
-      let Status= await service.customer.changeStatus(req.payload.emailid);
+   if(data[0].status =='pending'){
+    if(data[0].otp == req.payload.otp){
+       await service.customer.changeStatus(req.payload.emailid);
       return responseSend.sendSuccess(null,"OTP VERIFIED");
     }
     else{
-     return "OTP is not valid";
+     return constantMsg.errorMessage.eng.otpNotValid;
     }
   }
  else{
@@ -53,7 +54,7 @@ else{
 }
 },
 
-
+/********************************************OTP GENERATOR*********************************8 */
 OTPGenerator: async function(req){
 try{
   let data= await service.customer.emailCheck(req.payload.emailid);
@@ -75,12 +76,11 @@ else{
   throw err;
 }
 },
-
-checkData: async (payload)=>{
+/*********************************************************CHECK DATA FOR LOGIN******************************888 */
+checkDataForUser: async (payload)=>{
  try{
        let userData = await service.customer.emailCheck(payload.emailid);
        if(userData.length){
-         //console.log("useruseruser",userData);
          let myPassword=payload.password;
              let hash=userData[0].password;
             let check = await bcrypt.compareSync(myPassword,hash);
@@ -110,7 +110,7 @@ checkData: async (payload)=>{
   throw err;
 }
 },
-
+/********************************************* GET DATA OF CUSTOMER********************************* */
 getData: async (token)=>{
   try{
       await service.customer.verifyToken(token);

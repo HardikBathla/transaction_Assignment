@@ -38,7 +38,7 @@ const Control=require('../controller');
 {   method:'POST',
      path:'/user/login',
    config:{
-             description: 'Post the details of user',
+             description: 'Post the details of user for login',
              notes: 'Post the details.',
              tags: ['api'],
            plugins:{
@@ -53,7 +53,7 @@ const Control=require('../controller');
               }
           },
      handler:async function(req,res){
-      const response =await Control.customer.checkData(req.payload);
+      const response =await Control.customer.checkDataForUser(req.payload);
       return response;
     }
 }

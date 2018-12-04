@@ -9,7 +9,6 @@ const Control=require('../controller');
      notes: 'post job details of booking',
      tags: ['api'],
    plugins:{
-     //'hapiAuthorization': {role: 'ADMIN','USER'},
        'hapi-swagger':{
          payloadType:'form'
        }
@@ -60,7 +59,7 @@ const Control=require('../controller');
     return response;
   }
 },
-
+  /***************************************** CUSTOMER CREATE ON SIGNUP*****************************/
 {   method:'POST',
     path:'/Stripe/createCustomerOnStripe',
      config:{
@@ -78,16 +77,15 @@ const Control=require('../controller');
                'token':Joi.string().required()
              }).unknown(),
              payload: {
-              // cardNumber: Joi.string().alphanum().min(16).max(16).error(new Error('card number is not valid')).required(),
-              // cvc:Joi.string().alphanum().max(3).error(new Error('cvc is not valid')).required(),
-              // exp_year:Joi.string().required().description(' Expiration Year').error(new Error('exp_year is not valid')), 
-              // exp_month:Joi.string().min(1).max(2).required().description(' Expiration Month').error(new Error('exp_month is not valid')),
+              cardNumber: Joi.string().alphanum().min(16).max(16).error(new Error('card number is not valid')).required(),
+              cvc:Joi.string().alphanum().max(3).error(new Error('cvc is not valid')).required(),
+              exp_year:Joi.string().required().description(' Expiration Year').error(new Error('exp_year is not valid')), 
+              exp_month:Joi.string().min(1).max(2).required().description(' Expiration Month').error(new Error('exp_month is not valid')),
             }
            }
          },
     handler:async function(req,res){
     const response = await Control.booking.create_token(req);
-   // console.log("Response",response)
     return response;
   }
 }

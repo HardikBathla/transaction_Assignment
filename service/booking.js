@@ -2,6 +2,7 @@ let jwtDecode = require('jwt-decode');
 const stripe = require("stripe")('sk_test_yzle9vRHc8IgcQBhonZB68re');
  
  module.exports ={
+   /*************************************CREATE BOOKING VIA WALLET*************************** */
   createBookingViaWallet: async (req)=>{
     try{
   let body= jwtDecode(req.headers.token);
@@ -68,6 +69,7 @@ return "Booking Created";
   throw err;
 }
 },
+/************************************************CREATE BOOKING VIA STRIPE****************************8 */
 createBookingViaStripe: async (req)=>{
   try{
 let body= jwtDecode(req.headers.token);
@@ -149,6 +151,7 @@ return "Booking Created";
 throw err;
 }
 },
+/*********************************************ADD MONEY TO WALLET**************************** */
 addMoneyToWallet: async (req)=>{
   try{
 let body= jwtDecode(req.headers.token);

@@ -7,30 +7,36 @@ const bcrypt=require('bcrypt');
 
 
 module.exports={
-   pushDataAdmin1: async function(){
+  /****************************INSERT ADMIN WHEN SERVER STARTS ********************/
+                      // CHECK ADMIN EXISTS THEN SKIP OTHERWISE INSERT
+   pushDataAdmin: async function(){
    try{
-      let data= await service.admin.emailCheck("hardik@gmail.com");
-if(!data.length){
+      let emailId = "hardik@gmail.com"
+      let data    = await service.admin.emailCheck(emailId);
+      if(!data.length){
        await service.admin.createAdmin1();
       return "Created Admin1"
- }
+       }
 }catch(err){
    throw err;
  }
 },
-checkData: async (req)=>{
+/***************************Check Data(email,password) for login ********************/
+                          // Generate token using jwt
+  
+checkDataForLogin: async (req)=>{
        let userData = await service.admin.emailCheck(req.payload.emailid);
        if(userData.length){
-         let myPassword=req.payload.password;
-             let hash=userData[0].password;
-            let check = await bcrypt.compareSync(myPassword,hash);
+         let myPassword = req.payload.password;
+             let hash   = userData[0].password;
+            let check   = await bcrypt.compareSync(myPassword,hash);
             if(check){
-             const privateKey = 'NeverShareYourSecret';
-              const token = jwt.sign({ emailid: req.payload.emailid,role:userData[0].role,customer_id:userData[0].customer_id }, privateKey, { algorithm: 'HS256'} );
-              let result={
+              const privateKey = 'NeverShareYourSecret';
+              const token      = jwt.sign({ emailid: req.payload.emailid,role:userData[0].role,customer_id:userData[0].customer_id }, privateKey, { algorithm: 'HS256'} );
+              let result       = {
                 username:userData[0].username,
-                emailid:userData[0].emailid,
-                token:token
+                emailid :userData[0].emailid,
+                token   :token
               }
               return responseSend.sendSuccess(null,result)
             }
@@ -42,15 +48,16 @@ checkData: async (req)=>{
          throw constantMsg.errorMessage.eng.userNotFound;
        }
  },
+/***************************Get data of admin by passing token ********************/
+                          // decode token using jwtdecode
 
-
-getData: async (token)=>{
+getDataOfAdmin: async (token)=>{
   try{
      await service.admin.verifyToken(token);
-    let body= jwtDecode(token);
-     let user= await service.admin.emailCheck(body.emailid);
+     let body  = jwtDecode(token);
+     let user  = await service.admin.emailCheck(body.emailid);
      if(user.length){
-       let check= await service.admin.roleCheck(token);
+       let check = await service.admin.roleCheck(token);
        if(check.length){
      delete check[0].password;
      delete check[0].createdAt;

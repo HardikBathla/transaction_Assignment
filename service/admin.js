@@ -5,6 +5,7 @@ let jwtDecode = require('jwt-decode');
 global.P = require('bluebird');
 
  module.exports ={
+   /****************************************** CREATE ADMIN IF NOT EXISTS****************************/
   createAdmin1: async ()=>{
     try{
   let myPassword = "123456";
@@ -36,7 +37,7 @@ global.P = require('bluebird');
 throw err;
 }
 },
-
+/************************************************EMAIL CHECK EXISTS OR NOT****************************** */
 emailCheck:async (email)=>{
   try{
    return new Promise(function(resolve, reject) {
@@ -51,6 +52,8 @@ emailCheck:async (email)=>{
         throw err;
       }
    },
+
+   /************************************************ROLE CHECK FOR AUTHORIZATION**********************************8 */
    roleCheck:async (token)=>{
      let body= jwtDecode(token);
       return new Promise(function(resolve, reject) {
@@ -63,7 +66,7 @@ emailCheck:async (email)=>{
           });
       },
      
-        
+     /************************************************ VERIFY TOKEN (CORRECT OR NOT) ***************************/   
    verifyToken : async function(token){
        await jwt.verify(token, 'NeverShareYourSecret',(err)=>{
         if(err){
@@ -71,7 +74,7 @@ emailCheck:async (email)=>{
         }
        }) ;
      },
-   
+   /******************************************* GENERAL FUNCTION FOR EXECUTING SQL QUERY IN ASYNC MANNNER ***************************/
     executeQuery:async function (sql, variables) {
             try {
               const result = await connection.queryAsync(sql, variables);

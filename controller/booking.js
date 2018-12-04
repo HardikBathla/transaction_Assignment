@@ -9,7 +9,8 @@ module.exports={
 
   createBooking: async (req)=>{
     try{
-        const totalAmount = 1; // Booking Amount
+        /***************************************Create Booking via wallet or stripe********************** */
+        const totalAmount  = 1; //Fixed Booking Amount
         req.payload.amount = totalAmount;
          await service.customer.verifyToken(req.headers.token);
          let body= jwtDecode(req.headers.token);
@@ -25,13 +26,14 @@ module.exports={
                   }
         }
         else{
+            /*************************************** Check wallet amount of customer**************************/ 
             var sql = "SELECT `wallet`,`customer_id` FROM `customer` WHERE `customer_id`=? LIMIT 1";
             let walletData = await service.admin.executeQuery(sql, [body.customer_id])
                 if(totalAmount>walletData[0].wallet){
                     return ConstantMsg.errorMessage.eng.insufficientFund;
                 }
                 else{
-                     /***********************************WAllet PAyment *********************************/
+                     /***********************************WAllet Payment *********************************/
                      req.payload.walletAmount = walletData[0].wallet;
                     let bookingData = await service.booking.createBookingViaWallet(req);
                     return bookingData;
@@ -42,6 +44,7 @@ module.exports={
          return ResponseSend.sendError(error);
 }
 },
+/***************************************** Generate token for creating customer on stripe******************/
  create_token : async function (req, res) {
     try{
     let token = await stripePublicKey.tokens.create({
@@ -50,10 +53,10 @@ module.exports={
             "exp_month": '12',
             "exp_year": '2019',
             "cvc": '123'
-            // "number": req.payload.cardNumber,
-            // "exp_month": req.payload.exp_month,
-            // "exp_year": req.payload.exp_year,
-            // "cvc": req.payload.cvc
+            // "number": req.payload.cardNumber || '4242424242424242',
+            // "exp_month": req.payload.exp_month || '12',
+            // "exp_year": req.payload.exp_year || '2019',
+            // "cvc": req.payload.cvc || '123'
         }
     }) 
     
@@ -64,6 +67,7 @@ module.exports={
         return error;
 }
 },
+/************************************** ADD MONEY TO WALLET**********************************/
 addMoneyToWallet : async function (req, res) {
     try{
     await service.customer.verifyToken(req.headers.token);
@@ -75,7 +79,7 @@ addMoneyToWallet : async function (req, res) {
 }
 }
 };
-
+/******************************** Add Card for a customer************************** */
  var addCreditCard= async (token,sourced,res)=>{
     let source = sourced;
     await service.customer.verifyToken(token);
@@ -93,6 +97,7 @@ addMoneyToWallet : async function (req, res) {
    return "Card Already Added";
  
 }
+/****************************************** CREATE CUSTOMER ON STRIPE***********************/
 function createCustomerStripe(source,email) {
       return new Promise(function(resolve,reject){
     stripe.customers.create({

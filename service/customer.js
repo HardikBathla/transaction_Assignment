@@ -6,6 +6,7 @@ const jwt =require('jsonwebtoken');
 let jwtDecode = require('jwt-decode');
 
  module.exports ={
+   /******************************************** CREATE CUSTOMER *******************************8 */
   createCustomer: async (req)=>{
   let myPassword = req.payload.password;
   let saltRounds=10;
@@ -39,6 +40,7 @@ let jwtDecode = require('jwt-decode');
    return responseSend.sendSuccess(null,taskData);
 },
 
+/**************************************EMAIL CHECK IF EXISTS OR NOT******************************* */
 emailCheck:(email,res)=>{
    return new Promise(function(resolve, reject) {
      connection.query('SELECT * FROM customer WHERE emailid=?',email,function (err, rows,fields){
@@ -49,7 +51,7 @@ emailCheck:(email,res)=>{
            });
        });
    },
-
+/************************************************ INSERT OTP TO DATABASE****************************** */
       insertOTP:async (req)=>{
         global.otp=randomize('0',5);
         let date=new Date();
@@ -63,6 +65,7 @@ emailCheck:(email,res)=>{
              });
              return otp;
          },
+/**************************************PHONE CHECK IF EXISTS OR NOT******************************* */
 
    phoneCheck:(req,res)=>{
       return new Promise(function(resolve, reject) {
@@ -75,6 +78,9 @@ emailCheck:(email,res)=>{
               });
           });
       },
+
+      /**************************************ROLE CHECK FOR AUTHORIZATION******************************* */
+
       roleCheck:async (token)=>{
         let body= jwtDecode(token);
         console.log("body",body);
@@ -87,6 +93,7 @@ emailCheck:(email,res)=>{
                  });
              });
          },
+/**************************************TOKEN CHECK IF CORRECT OR NOT******************************* */
 
          verifyToken : async function(token){
                await jwt.verify(token, 'NeverShareYourSecret',(err)=>{
@@ -96,7 +103,8 @@ emailCheck:(email,res)=>{
                }) ;
              },
 
-          
+          /**************************************CHANGE CUSTOMER STATUS IF NOT VERIFIED******************************* */
+
     changeStatus : function(email){
       return new Promise(function(resolve, reject) {
         let date=new Date();
@@ -109,6 +117,7 @@ emailCheck:(email,res)=>{
               });
           });
       },
+/**************************************GET CUSTOMER DETAILS******************************* */
 
         getCustomer:async function(emailid){
 
